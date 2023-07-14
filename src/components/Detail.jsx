@@ -20,7 +20,7 @@ const Detail = () => {
         setJobdata(resdata);
       });
 
-  }, []);
+  });
 
 
   const fetchJobDetail = async()=>{

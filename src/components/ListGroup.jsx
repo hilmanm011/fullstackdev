@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import List from './List'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux';
 
-const ListGroup = (props) => {
-    const { description, location, full_time } = props.query
+const ListGroup = () => {
+
+    const searchQuery = useSelector((state)=>{
+        return state.jobSearch.value
+    })
+
+    const { description, location, full_time } = searchQuery
     
     const navigate = useNavigate()
     const [jobs, setJobs] = useState([]);
     const [page, setPage] = useState(1)
-    // const [totalPages, setTotalPages] = useState(0);
-
 
     useEffect(() => {
         const token = localStorage.getItem('auth-token')
@@ -18,10 +22,16 @@ const ListGroup = (props) => {
             navigate('/')
         }
         fetchJobs().then((resdata) => {
-            setJobs(resdata.data);
+            if (resdata.data) {
+                const jobs = resdata.data.filter((item)=> !!item)
+                setJobs(jobs);
+            } else {
+                setJobs([])
+            }
         });
 
-    }, [full_time,location,description,page]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchQuery,page]);
 
     const fetchJobs = async () => {
         try {
@@ -77,16 +87,15 @@ const ListGroup = (props) => {
                     jobs.length === 0 ? (
                         <p className='text-center mt-4'>No jobs found.</p>
                     ) : (
+                        
                         jobs.map((item) => {
-                            if (item) {
-                                return (
-                                    <List jobdata={item} key={item.id} />
-                                );
-                            }
+                            return (
+                                <List jobdata={item} key={item.id} />
+                            );
                         })
                     )
                 ) : (
-                    <p className='text-center mt-4'>No jobs found.</p>
+                    <p className='text-center mt-4'>Loading..</p>
                 )}
                 
             </ol>
@@ -102,7 +111,7 @@ const ListGroup = (props) => {
                 <button
                 className="btn btn-light btn-xs m-1"
                 onClick={handleNextPage}
-                disabled={!jobs}
+                disabled={!jobs || jobs.length === 0}
                 >
                 Next
                 </button>

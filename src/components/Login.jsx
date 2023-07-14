@@ -1,23 +1,29 @@
 import React from 'react'
 import axios from 'axios'
 import { useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { login } from '../features/user'
 
 const Login = () => {
-    const location = useLocation();
-    const {reqUsername, reqPassword } = location.state || {};
+    const userData = useSelector((state)=>{
+        return state.user.value
+    })
+    const dispatch = useDispatch()
+
     
     const navigate = useNavigate()
     const [username, setUsername]= useState('')
     const [password, setPassword]= useState('')
     
     useEffect(() => {
-        if (reqUsername && reqPassword) {
-        setUsername(reqUsername);
-        setPassword(reqPassword);
+        if (userData.fullname && userData.password) {
+            setUsername(userData.username);
+            setPassword(userData.password);
+
         }
-    }, [reqUsername, reqPassword]);
+    }, [userData]);
 
     const [alert, setAlert] = useState('')
 
@@ -31,7 +37,9 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+        const data =  { username: username }
+        dispatch(login(data))
+
         try {
             const response = await axios.post('http://localhost:5000/auth/login', {
                 username,
@@ -52,10 +60,11 @@ const Login = () => {
 
     return (
         <div className='container'>
+            
             <div className="container d-flex justify-content-center align-items-center vh-100">
                 <div className="card col-6">
-                    {reqUsername ? (
-                        <h6 className='text-success text-center m-2 mb-3'>Hi, {reqUsername} successfully registered. Please login!</h6>
+                    {userData.fullname ? (
+                        <h6 className='text-success text-center m-2 mb-3'>Hi, {userData.fullname} successfully registered. Please login!</h6>
                     ) : (
                         ''
                     )}

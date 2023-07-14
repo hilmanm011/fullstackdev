@@ -1,9 +1,13 @@
 import axios from 'axios'
 import React from 'react'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import { register } from '../features/user'
 
 const Register = () => {
+    const dispatch = useDispatch()
+
     const navigate = useNavigate()
     const [fullname, setFullname] = useState('')
     const [username, setUsername] = useState('')
@@ -32,7 +36,10 @@ const Register = () => {
                 password,
             });
             if (response.data.status === 201) {
-                navigate('/', { state: { reqUsername: username, reqPassword: password }});
+                // navigate('/', { state: { reqUsername: username, reqPassword: password }});
+                navigate('/');
+                dispatch(register({ username, fullname, password }))
+
             } else {
                 setAlert(response.data)
             }

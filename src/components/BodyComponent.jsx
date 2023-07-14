@@ -1,13 +1,16 @@
 import React from 'react'
 import { useState } from 'react';
-import ListGroup from './ListGroup'
+import { useDispatch } from 'react-redux';
+import { searchQuery } from '../features/job';
+import Profile from './Profile';
 
 
 const BodyComponent = () => {
+  const dispatch = useDispatch()
+  
   const [isChecked, setIsChecked] = useState(false);
   const [searchJobDesc, setSearchJobDesc] = useState('')
   const [searchLocation, setSearchLocation] = useState('')
-  const [query, setQuery] = useState({})
 
   const handleCheckboxChange = () => {
     setIsChecked((prevChecked) => !prevChecked);
@@ -34,11 +37,15 @@ const BodyComponent = () => {
     if (isChecked) {
       query.full_time = isChecked
     }
-    setQuery(query)
+
+    dispatch(searchQuery(query))
   }
 
   return (
+    
     <>
+        <Profile />
+
         <div className="mb-3 mt-4 d-flex flex-wrap justify-content-between align-items-center col-md-12">
           <div className="col-4 me-1">
               <label className="form-label fw-bold">Job Description</label>
@@ -78,7 +85,7 @@ const BodyComponent = () => {
             </div>
           </div>
         </div>
-        <ListGroup query={query} />
+        
     </>
   )
 }

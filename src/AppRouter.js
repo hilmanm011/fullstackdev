@@ -9,8 +9,6 @@ import Register from './components/Register'
 const AppRouter = () => {
   return (
     <BrowserRouter>
-        {/* <App /> */}
-        
         <Routes>
             <Route path="/home" element={<App/>} />
             <Route path="/" element={<Login />} />
